@@ -302,17 +302,3 @@ if(altTags) {
 }
 
 await browser.close();
-
-function parseArguments() {
-
-}
-
-function cleanup() {
-
-}
-
-function main() {
-
-}
-
-
