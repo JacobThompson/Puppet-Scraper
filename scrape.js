@@ -3,34 +3,28 @@ import { parse } from "https://deno.land/std/flags/mod.ts";
 import puppeteer from "https://deno.land/x/puppeteer@14.1.1/mod.ts";
 import { Parser, unescapeEntity } from 'https://deno.land/x/xmlparser@v0.2.0/mod.ts'
 import { createRequire } from "https://deno.land/std/node/module.ts";
-import { writeCSV, writeCSVObjects } from "https://deno.land/x/csv/mod.ts";
-
-
+import { writeCSV, writeCSVObjects } from "https://deno.land/x/csv@v0.9.1/mod.ts";
 
 let args = parse(Deno.args);
-
-console.log(args);
 
 let path;
 let cdStatus;
 
-
-let txt = args.txt ? "Y" : false; 
-let pdf = args.pdf ? "Y" : false; 
-let titles = args.titles ? "Y" : false;
-let metas = args.metas ? "Y" : false;
-let docWriteScan = args.docWrite ? "Y" : false;
-let logSitemap = args.sitemap ? "Y" : false;
-let links = args.links ? "Y" : false;
-let findTextOnPages = args.scantext ? "Y" : false;
+let txt = args.txt;
+let pdf = args.pdf;
+let titles = args.titles;
+let metas = args.metas;
+let docWriteScan = args.docWrite;
+let logSitemap = args.sitemap;
+let links = args.links;
+let findTextOnPages = args.scantext;
 let options = args.options;
-let overwrite = args.overwrite ? true : false;
-let scanhtml = args.scanhtml ? true : false;
-let altTags = args.alt ? true : false;
+let overwrite = args.overwrite;
+let scanhtml = args.scanhtml;
+let altTags = args.alt;
 let GTMID = args.gtm; 
 
-
-if(options == true) {
+if(options) {
 	console.log("help");
 	console.log("txt");
 	console.log("pdf")
@@ -54,7 +48,7 @@ if(!args.url) {
 }
 
 do {
-	if(pdf != "Y" && txt != "Y" && links != "Y" && logSitemap == "Y") {
+	if(!pdf && !txt && !links && !logSitemap) {
 		break;	
 	}
 	path = await prompt("Please enter where you would like to save the files\n") + "/"; 
@@ -67,11 +61,11 @@ do {
 } while (cdStatus.code != 0); 
 
 let useSitemap = await prompt("Would you like to crawl the whole site? (Y/n)");
-let sitemap = "n";
-if(useSitemap == "Y") 
+let sitemap = useSitemap == "Y" ? true : false; 
+if(useSitemap) 
 	sitemap = await prompt("Where should we find the sitemap on the server? (default: /page-sitemap.xml)", "/page-sitemap.xml"); 
 let sitemapXML;
-if(sitemap != "n") {
+if(sitemap) {
 	try {
 		let response = await fetch(url + sitemap); 
 		sitemapXML = await response.text();
@@ -82,7 +76,7 @@ if(sitemap != "n") {
 }
 
 let URLs;
-if(useSitemap == "Y") {
+if(useSitemap) {
 	URLs = [];
 	let output = "";
 	const parser = new Parser({});
@@ -101,13 +95,9 @@ else {
 	URLs = [url];
 }
 
-if(pdf != "Y" && txt != "Y" && logSitemap != "Y" && links != "Y" && metas != "Y" && docWriteScan != "Y" && findTextOnPages != "Y" && titles != "Y" && !altTags) {
+if(!pdf && !txt && !logSitemap && !links && !metas && !docWriteScan && !findTextOnPages && !titles && !altTags) {
 	console.error("Warning: You didn't choose an output format.");
 }
-
-//if(pdf != "Y" && txt != "Y" && logSitemap == "Y") {
-//	Deno.exit(1);
-//}
 
 let browser = await puppeteer.launch({ignoreHTTPSErrors: true});
 let page = await browser.newPage();
@@ -117,6 +107,7 @@ let metaDesc = {};
 let titlesList = {};
 let crawledURLsHistory 
 let crawledURLs = []; 
+
 try {
 	await Deno.stat("urlhistory.json");
 	crawledURLsHistory = await Deno.readTextFile("urlhistory.json");
@@ -157,7 +148,7 @@ for(let urlItem of URLs) {
 		page = await browser.newPage();
 	}
 
-	if(txt == "Y") { 
+	if(txt) { 
 		const innerText = await(page.evaluate(() => {
 			return document.body.innerText;
 		}));
@@ -169,18 +160,25 @@ for(let urlItem of URLs) {
 	}
 	if(links == "Y") {
 		const pagelinks = await (page.evaluate(() => {
-			let linksFormatted = "";
+			let linksFormatted = [];
 			for(let a of document.getElementsByTagName("a")) {
-				linksFormatted += "Page: " + window.location.href + " Anchor: {" + a.innerText + "} -> " + a.href + "\n";
+				linksFormatted.push([window.location.href ?? null, a.innerText ?? null, a.href ?? null]);
 			}
 			return linksFormatted;
 		}));
-		const encoder = new TextEncoder();
 				
-		let linksUTF = encoder.encode(pagelinks);
-		let filename = path + urlItem.replaceAll(/:/g, '').replaceAll(/\//g, '_') + ".links.txt";
+		const filename = path + url.replaceAll(/:/g, '').replaceAll(/\//g, '_') + ".links.csv";
+
+		const file = await Deno.open(path + filename, {
+			write: true,
+			create: true,
+			append: true
+		});
 		
-		await Deno.writeFile(filename, linksUTF);
+		await writeCSV(file, pagelinks);
+
+		//Fix no newline at the end of file causing last line of the write to overlap with first line when appended.
+		await Deno.writeTextFile(path + filename, "\n", {append: true});
 	}
 	if(metas == "Y") {
 		const desc = await(page.evaluate(() => {
@@ -302,3 +300,4 @@ if(altTags) {
 }
 
 await browser.close();
+
