@@ -1,6 +1,6 @@
 "use strict"
 import { parse } from "https://deno.land/std/flags/mod.ts";
-import puppeteer from "https://deno.land/x/puppeteer@14.1.1/mod.ts";
+import puppeteer from "https://deno.land/x/puppeteer@16.2.0/mod.ts";
 import { Parser, unescapeEntity } from 'https://deno.land/x/xmlparser@v0.2.0/mod.ts'
 import { writeCSV, writeCSVObjects } from "https://deno.land/x/csv@v0.9.1/mod.ts";
 
@@ -43,28 +43,29 @@ if(options) {
 
 let url = args.url;
 if(!args.url) {
-	url = await prompt("Please enter the URL to scrape\n");
+	url = prompt("Please enter the URL to scrape\n");
 }
 
 do {
 	if(!pdf && !txt && !links && !logSitemap) {
 		break;	
 	}
-	path = await prompt("Please enter where you would like to save the files\n") + "/"; 
+	path = prompt("Please enter where you would like to save the files\n"); 
 	const stat = await Deno.stat(path);
-	cdStatus = await stat.isDirectory;
+	cdStatus = stat.isDirectory;
 	if(!cdStatus) { 
 		console.log("Invalid pathname.");
 	}
 
-} while (cdStatus); 
+} while (!cdStatus); 
+path += "/";
 
-let useSitemap = await prompt("Would you like to crawl the whole site? (Y/n)");
-let sitemap = useSitemap == "Y" ? true : false; 
-if(useSitemap) 
-	sitemap = await prompt("Where should we find the sitemap on the server? (default: /page-sitemap.xml)", "/page-sitemap.xml"); 
+let useSitemap = prompt("Would you like to crawl the whole site? (Y/n)");
+let sitemap;
+if(useSitemap === "Y") 
+	sitemap = prompt("Where should we find the sitemap on the server? (default: /page-sitemap.xml)", "/page-sitemap.xml"); 
 let sitemapXML;
-if(sitemap) {
+if(useSitemap === "Y") {
 	try {
 		let response = await fetch(url + sitemap); 
 		sitemapXML = await response.text();
@@ -75,7 +76,7 @@ if(sitemap) {
 }
 
 let URLs;
-if(useSitemap) {
+if(useSitemap === "Y") {
 	URLs = [];
 	let output = "";
 	const parser = new Parser({});
