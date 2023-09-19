@@ -10,7 +10,7 @@ NOTE: This is a very preliminary prototype that is in alpha.
 ## How to run
 
 ```
-deno run --allow-all --unstable ./src/scrape.js {arguments}
+deno run --allow-all --unstable scrape.js {arguments}
 ```
 
 ## Available arguments
