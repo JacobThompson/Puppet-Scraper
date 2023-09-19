@@ -2,7 +2,6 @@
 import { parse } from "https://deno.land/std/flags/mod.ts";
 import puppeteer from "https://deno.land/x/puppeteer@14.1.1/mod.ts";
 import { Parser, unescapeEntity } from 'https://deno.land/x/xmlparser@v0.2.0/mod.ts'
-import { createRequire } from "https://deno.land/std/node/module.ts";
 import { writeCSV, writeCSVObjects } from "https://deno.land/x/csv@v0.9.1/mod.ts";
 
 let args = parse(Deno.args);
@@ -52,13 +51,13 @@ do {
 		break;	
 	}
 	path = await prompt("Please enter where you would like to save the files\n") + "/"; 
-	let cd = Deno.run({cmd: ["cd", path]});
-	cdStatus = await cd.status();
-	if(cdStatus.code != 0) { 
+	const stat = await Deno.stat(path);
+	cdStatus = await stat.isDirectory;
+	if(!cdStatus) { 
 		console.log("Invalid pathname.");
 	}
 
-} while (cdStatus.code != 0); 
+} while (cdStatus); 
 
 let useSitemap = await prompt("Would you like to crawl the whole site? (Y/n)");
 let sitemap = useSitemap == "Y" ? true : false; 
