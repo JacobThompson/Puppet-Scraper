@@ -1,4 +1,5 @@
 import {isString} from "./Util.js";
+import {PUPPET_SCRAPE_LOG} from "./EventLog.js";
 
 class URLList {
 	/*
@@ -7,35 +8,35 @@ class URLList {
 	 * options:
 	 * 	internalOnly: bool 
 	 * 		If set to true, you can only add URLs to the domain specified.
+	 * 	ignoreCanonical: bool
+	 * 		If set to true, remove duplicate URLs with varying www subdomains and http protocols.
 	 */
-	constructor(listOfURLs, options, domain = null) {
-		debugger;
+	constructor(listOfURLs, domain = null, options) {
 		if(isString(listOfURLs)) {
 			const arrayWrapper = [];
 			arrayWrapper.push(listOfURLs);
 			listOfURLs = arrayWrapper;
 		}
+
+		URLList.removeInvalidURLs(listOfURLs);
+
 		if(options && options.internalOnly) {
 			if(!domain) {
 				throw new Error("If internalOnly is set, you must specify the domain argument in the URLList constructor arguments");
 			}
 
 			for(let i = 0 ; i < listOfURLs.length ; i++) {
-				debugger;
 				if(!URLList.isInDomain(listOfURLs[i], domain)) {
-					console.error("URL is not in internal domain. Skipping.");
+					PUPPET_SCRAPE_LOG.warn("URL is not in internal domain. Skipping.");
 					listOfURLs.splice(i, 1);
+					i--;
 				}
 			}
 		}
 
-		for(let i = 0 ; i < listOfURLs.length ; i++) {
-			if(!URLList.isValidURI(listOfURLs[i])) {
-				listOfURLs.splice(i, 1);
-			}
-		}
+		const urlSet = new Set(listOfURLs);
 
-		this.urls = listOfURLs;
+		this.urls = urlSet;
 		this.options = options;
 		this.domain = domain;
 	}
@@ -63,25 +64,42 @@ class URLList {
 		return urlRegex.test(uri);
 	}
 
-	addURLToList(url) {
-		throw new Error('Not implemented');
-		if(Array.isArray(url)) {
+	static removeInvalidURLs(urls) {
+		if(!Array.isArray(urls)) throw new Error("URLList.removeInvalidURLs argument must be an array");
 
+		for(let i = 0 ; i < urls.length ; i++) {
+			if(!URLList.isValidURI(urls[i])) {
+				urls.splice(i, 1);
+				i--;
+			}
 		}
-		else if(typeof url === 'string' || url instanceof String) {
-			
+		return urls;
+	}
+
+	addURLToList(url) {
+		if(Array.isArray(url)) {
+			URLList.removeInvalidURLs(url);
+			for(const u of url) {
+				if(this.options && this.options.internalOnly && !URLList.isInDomain(u, this.domain)) continue;
+				this.urls.add(u);
+			}
+		}
+		else if(isString(url)) {
+			if(!URLList.isValidURI(url)) return;
+			if(this.options && this.options.internalOnly && !URLList.isInDomain(url, this.domain)) return;
+			this.urls.add(url);	
 		}
 		else {
 			throw new Error("Invalid argument to URLList.addURLToList(), must be an array of strings or a string.");
 		}
 	}
 
-	get getURLList() {
-		return this.urls;
+	removeURLFromList(url) {
+		return this.urls.delete(url);
 	}
 
-	set setURLList(listOfURLs) {
-		constructor(listOfURLs, this.options, this.domain);
+	get getURLList() {
+		return Array.from(this.urls);
 	}
 }
 
