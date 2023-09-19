@@ -27,7 +27,7 @@ class URLList {
 
 			for(let i = 0 ; i < listOfURLs.length ; i++) {
 				if(!URLList.isInDomain(listOfURLs[i], domain)) {
-					PUPPET_SCRAPE_LOG.warn("URL is not in internal domain. Skipping.");
+//					PUPPET_SCRAPE_LOG.warn("URL is not in internal domain. Skipping.");
 					listOfURLs.splice(i, 1);
 					i--;
 				}
