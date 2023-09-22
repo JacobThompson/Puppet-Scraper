@@ -83,7 +83,7 @@ if(useSitemap === "Y") {
 	const sitemapLinks = parser.parse(sitemapXML);
 	for(let url of sitemapLinks.getChild('urlset').find(['url', 'loc'])) {
 		URLs.push(url.value);	
-		if(logSitemap == "Y") {
+		if(logSitemap) {
 			console.log(url.value);
 			output += url.value + "\n";
 		}
@@ -158,7 +158,7 @@ for(let urlItem of URLs) {
 		
 		await Deno.writeFile(path + urlItem.replaceAll(/:/g, '').replaceAll(/\//g, '_') + ".txt", innerTextUTF);
 	}
-	if(links == "Y") {
+	if(links) {
 		const pagelinks = await (page.evaluate(() => {
 			let linksFormatted = [];
 			for(let a of document.getElementsByTagName("a")) {
@@ -180,7 +180,7 @@ for(let urlItem of URLs) {
 		//Fix no newline at the end of file causing last line of the write to overlap with first line when appended.
 		await Deno.writeTextFile(path + filename, "\n", {append: true});
 	}
-	if(metas == "Y") {
+	if(metas) {
 		const desc = await(page.evaluate(() => {
 			for(let a of document.getElementsByTagName("meta")) {
 				if(a.name == "description") {
@@ -190,18 +190,18 @@ for(let urlItem of URLs) {
 		}));
 		metaDesc[urlItem] = desc;	
 	}
-	if(titles == "Y") {
+	if(titles) {
 		const title = await(page.evaluate(() => {
 			return document.title;
 		}));
 		titlesList[urlItem] = title;
 	}
-	if(pdf == "Y") {
+	if(pdf) {
 		await page.setViewport({width: 1920, height: 1080});	
 		await page.emulateMediaType('screen');
 		await page.pdf({path: path + urlItem.replaceAll(/:/g, '').replaceAll(/\//g, '_') + ".pdf", format: "A4", printBackground: true});  
 	}
-	if(docWriteScan == "Y") {
+	if(docWriteScan) {
 		const containsDocWrite = await (page.evaluate(() => {
 			return document.documentElement.innerHTML.includes("document.write");
 		}));
@@ -210,7 +210,7 @@ for(let urlItem of URLs) {
 		}
 	}
 
-	if(findTextOnPages == "Y") {
+	if(findTextOnPages) {
 		const containsText = await (page.evaluate(() => {
 			let textContained = document.documentElement.innerHTML.toLowerCase().includes("pre-abortion screening") || 
 				document.documentElement.innerText.toLowerCase().includes("preabortionscreening") || 
@@ -272,7 +272,7 @@ for(let urlItem of URLs) {
 	}
 
 }
-if(metas == "Y") {
+if(metas) {
 	const encoder = new TextEncoder();
 	let output = "";
 	for(let md in metaDesc) {
@@ -280,7 +280,7 @@ if(metas == "Y") {
 	}
 	await Deno.writeFile("MetaDesc.csv", encoder.encode(output));
 }
-if(titles =="Y") {
+if(titles){
 	const encoder = new TextEncoder();
 	let output = "";
 	for(let title in titlesList) {
