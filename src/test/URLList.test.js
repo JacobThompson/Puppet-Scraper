@@ -32,7 +32,7 @@ Deno.test("Testing URLList.removeInvalidURLs()", () => {
 	assertEquals(URLList.removeInvalidURLs([""]), []);
 	assertEquals(URLList.removeInvalidURLs([1]), []);
 	assertEquals(URLList.removeInvalidURLs(["https://reddit.com/about?a=4", "tree", "banana", "google.com"]), ["https://reddit.com/about?a=4", "google.com"]);
-	assertEquals(URLList.removeInvalidURLs([new Array(), new Set(), new Object()]), []);
+	assertEquals(URLList.removeInvalidURLs([Array.from([]), new Set(), new Object()]), []);
 	assertEquals(URLList.removeInvalidURLs([5132, "https:///"]), []);
 
 });
