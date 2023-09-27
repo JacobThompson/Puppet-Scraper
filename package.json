@@ -1,5 +1,9 @@
 {
   "dependencies": {
+    "csv": "^6.3.3",
+    "csv-generate": "^4.2.8",
+    "csv-parse": "^5.5.0",
+    "fast-xml-parser": "^4.3.1",
     "puppeteer": "^21.3.5"
   }
 }

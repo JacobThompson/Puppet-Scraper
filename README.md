@@ -1,8 +1,12 @@
 # Puppet-Scraper
 
-A web scraper written with Puppeteer and Deno
+A web scraper written with Puppeteer and ~~Deno~~ Node.js
 
-NOTE: This is a very preliminary prototype that is in alpha. 
+NOTE: This is a very preliminary prototype that is in alpha. Not currently working. 
+
+STATUS: This project has a dependency on deno-puppeteer. This depedency is no longer functioning.
+This project is being ported to node.js
+
 
 ## Requirements
 [deno](https://deno.land/)

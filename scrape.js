@@ -1,14 +1,14 @@
 "use strict"
-import { parse } from "https://deno.land/std/flags/mod.ts";
-import puppeteer from "https://deno.land/x/puppeteer@16.2.0/mod.ts";
-import { Parser, unescapeEntity } from 'https://deno.land/x/xmlparser@v0.2.0/mod.ts'
-import { writeCSV, writeCSVObjects } from "https://deno.land/x/csv@v0.9.1/mod.ts";
+const puppeteer = require("puppeteer");
+const { XMLParser } = require("fast-xml-parser");
+//const { writeCSV, writeCSVObjects } from "https://deno.land/x/csv@v0.9.1/mod.ts";
 
-let args = parse(Deno.args);
+let args = process.argv.slice(2);
 
 let path;
 let cdStatus;
 
+//TODO properly parse args from deno.
 let txt = args.txt;
 let pdf = args.pdf;
 let titles = args.titles;
