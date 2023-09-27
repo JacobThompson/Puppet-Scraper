@@ -1,7 +1,5 @@
-import Logger from "https://deno.land/x/logger@v1.1.2/logger.ts";
+import { Logger } from 'https://deno.land/x/log/mod.ts'
 
-const PUPPET_SCRAPE_LOG = new Logger();
-await PUPPET_SCRAPE_LOG.initFileLogger("../ScraperEvents.log");
-PUPPET_SCRAPE_LOG.disableConsole();
+const logFile = "./scrape-log.txt";
+export const PUPPET_SCRAPE_LOG = await Logger.getInstance("INFO", "DEBUG", logFile);
 
-export {PUPPET_SCRAPE_LOG};
