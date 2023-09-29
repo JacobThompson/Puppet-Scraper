@@ -6,7 +6,7 @@ export let options = {
 	links: false,
 	overwrite: false,
 	url: '',
-}
+};
 
 function printHelp() {
 	console.log("A website scraper.\n");
@@ -33,24 +33,24 @@ function printHelp() {
 	console.log("        Designate the URL to scrape.\n"); 
 }
 
-function parseArgv(argv) {
+export function parseArgv(argv) {
 	const args = argv.slice(2);
 
 	for(const arg of args) {
-		switch(arg) {
-			case 'txt':
+		switch(arg.split("=")[0]) {
+			case '--txt':
 				break;
-			case 'pdf':
+			case '--pdf':
 				break;
-			case 'titles':
+			case '--titles':
 				break;
-			case 'metas':
+			case '--metas':
 				break;
-			case 'links':
+			case '--links':
 				break;
-			case 'overwrite':
+			case '--overwrite':
 				break;
-			case 'url':
+			case '--url':
 				break;
 			default:
 				break;
