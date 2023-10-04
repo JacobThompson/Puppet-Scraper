@@ -1,4 +1,4 @@
-const URLList = require('../main/URLList.js');
+const URLList = require("../main/URLList.js");
 
 test("Testing URLList.isInDomain()", () => {
 	expect(URLList.isInDomain("https://google.com/help/products", "https://google.com")).toBe(true);

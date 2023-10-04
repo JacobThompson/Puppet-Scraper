@@ -4,7 +4,7 @@ A web scraper written with Puppeteer and ~~Deno~~ Node.js
 
 NOTE: This is a very preliminary prototype that is in alpha. Not currently working. 
 
-STATUS: This project has a dependency on deno-puppeteer. This depedency is no longer functioning.
+STATUS: This project has a dependency on deno-puppeteer. This dependency is no being maintained.
 This project is being ported to node.js
 
 
