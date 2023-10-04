@@ -1,4 +1,4 @@
-import {isString} from "./Util.js";
+const isString = require("./Util.js");
 
 class URLList {
 	/*

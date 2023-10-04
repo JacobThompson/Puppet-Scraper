@@ -1,5 +1,6 @@
 
-export default function isString(testString) {
+function isString(testString) {
 	return typeof testString === 'string' || testString instanceof String;
 }
 
+module.exports = isString;
