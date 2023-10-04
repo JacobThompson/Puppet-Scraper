@@ -1,5 +1,12 @@
-import { Logger } from 'https://deno.land/x/log/mod.ts'
+const winston = require('winston');
 
 const logFile = "./scrape-log.txt";
-export const PUPPET_SCRAPE_LOG = await Logger.getInstance("INFO", "DEBUG", logFile);
+export const PUPPET_SCRAPE_LOG = winston.createLogger({
+	level: "info", 
+	format: winston.format.json(),
+	defaultMeta: { service: 'puppet-logger' },
+	transports: [
+		new winston.transports.File({filename: logFile});
+	],
+});
 

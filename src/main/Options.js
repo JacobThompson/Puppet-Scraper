@@ -36,24 +36,11 @@ function printHelp() {
 export function parseArgv(argv) {
 	const args = argv.slice(2);
 
+	let argsList = {};
+
 	for(const arg of args) {
-		switch(arg.split("=")[0]) {
-			case '--txt':
-				break;
-			case '--pdf':
-				break;
-			case '--titles':
-				break;
-			case '--metas':
-				break;
-			case '--links':
-				break;
-			case '--overwrite':
-				break;
-			case '--url':
-				break;
-			default:
-				break;
-		}
+		argsList[arg.replace('--', '').replace('-')] = arg.split('=')[1] ?? true;
 	}
+
+	return argsList;
 }

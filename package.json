@@ -4,6 +4,13 @@
     "csv-generate": "^4.2.8",
     "csv-parse": "^5.5.0",
     "fast-xml-parser": "^4.3.1",
-    "puppeteer": "^21.3.5"
+    "puppeteer": "^21.3.5",
+    "winston": "^3.10.0"
+  },
+  "devDependencies": {
+    "jest": "^29.7.0"
+  },
+  "scripts": {
+	"test": "jest"
   }
 }
