@@ -1,12 +1,18 @@
-const winston = require('winston');
+const {createLogger, format, transports} = require('winston');
+const {combine, timestamp, simple} = format;
 
 const logFile = "./scrape-log.txt";
-export const PUPPET_SCRAPE_LOG = winston.createLogger({
-	level: "info", 
-	format: winston.format.json(),
+const PUPPET_SCRAPE_LOG = createLogger({
+	level: "verbose", 
+	format: combine(
+		timestamp(),
+		simple()
+	),
 	defaultMeta: { service: 'puppet-logger' },
 	transports: [
-		new winston.transports.File({filename: logFile});
+		new transports.File({filename: logFile}),
+		new transports.Console(),
 	],
 });
 
+module.exports = PUPPET_SCRAPE_LOG;

@@ -1,4 +1,5 @@
 const isString = require("./Util.js");
+const PUPPET_SCRAPE_LOG = require("./EventLog.js");
 
 class URLList {
 	/*
@@ -26,7 +27,10 @@ class URLList {
 
 			for(let i = 0 ; i < listOfURLs.length ; i++) {
 				if(!URLList.isInDomain(listOfURLs[i], domain)) {
-//					PUPPET_SCRAPE_LOG.info("URL is not in internal domain. Skipping.");
+					PUPPET_SCRAPE_LOG.log({
+						level: 'verbose',
+						message: "URL is not in internal domain. Skipping."
+					});
 					listOfURLs.splice(i, 1);
 					i--;
 				}
