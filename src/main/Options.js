@@ -1,13 +1,52 @@
+const isString = require('./Util.js');
+const PUPPET_SCRAPE_LOG = require('./EventLog.js');
+
 class Options {
-	options = {
-		text: false,
-		pdf: false,
-		titles: false,
-		metaDescriptions: false,
-		links: false,
-		overwrite: false,
-		url: '',
-	};
+	constructor(argv) {
+		const listOfArguments = Options.parseArgv(argv);
+		this.options = {}
+		if(listOfArguments?.txt === true) {
+			this.options.text = true;
+		}
+		if(listOfArguments?.help === true) {
+			printHelp();
+			process.exit();
+		}
+		if(listOfArguments?.titles === true) {
+			this.options.titles = true;
+		}
+		if(listOfArguments?.metas === true) {
+			this.options.metaDescriptions = true;
+		}
+		if(listOfArguments?.links === true) {
+			this.options.links = true;
+		}
+		if(listOfArguments?.overwrite === true) {
+			this.options.overwrite = true
+		}
+		if(listOfArguments?.pdf === true) {
+			this.options.pdf = true;
+		}
+		if(isString(listOfArguments?.url)) {
+			this.options.url = listOfArguments.url;
+		}
+
+		delete listOfArguments.txt;
+		delete listOfArguments.help;
+		delete listOfArguments.titles;
+		delete listOfArguments.metas;
+		delete listOfArguments.links;
+		delete listOfArguments.overwrite;
+		delete listOfArguments.url;
+		delete listOfArguments.pdf;
+
+		for(const arg in listOfArguments) {
+			PUPPET_SCRAPE_LOG.log({
+				level: 'warn',
+				message: 'Provided argument not recognized: ' + arg,
+			});
+		}
+	}
 
 	static printHelp() {
 		console.log("A website scraper.\n");
@@ -35,15 +74,26 @@ class Options {
 	}
 
 	static parseArgv(argv) {
+		if(!Array.isArray(argv)) {
+			throw new TypeError("Arguments must be provided as an array");
+		}
 		const args = argv.slice(2);
 
 		let argsList = {};
 
 		for(const arg of args) {
-			argsList[arg.replace('--', '').replace('-', '')] = arg.split('=')[1] ?? true;
+			if(!isString(arg)) {
+				continue;
+			}
+			const splitOnEquals = arg.split("=");
+			argsList[splitOnEquals[0].replace('--', '').replace('-', '')] = splitOnEquals[1] ?? true;
 		}
 
 		return argsList;
+	}
+	
+	get argList() {
+		return this.options;
 	}
 }
 
