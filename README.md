@@ -9,16 +9,16 @@ This project is being ported to node.js
 
 
 ## Requirements
-[deno](https://deno.land/)
+[node.js 20](https://nodejs.org/)
 
-## Setup
-
-If this is your first time running, you will need to install Chrome.
-To do this run the following command:
-
-```
-PUPPETEER_PRODUCT=chrome deno run -A --unstable https://deno.land/x/puppeteer@16.2.0/install.ts
-```
+<> ## Setup
+<>
+<> If this is your first time running, you will need to install Chrome.
+<> To do this run the following command:
+<>
+<> ```
+<> PUPPETEER_PRODUCT=chrome deno run -A --unstable https://deno.land/x/puppeteer@16.2.0/install.ts
+<> ```
 
 ## How to run
 
