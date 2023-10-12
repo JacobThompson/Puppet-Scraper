@@ -11,19 +11,11 @@ This project is being ported to node.js
 ## Requirements
 [node.js 20](https://nodejs.org/)
 
-<> ## Setup
-<>
-<> If this is your first time running, you will need to install Chrome.
-<> To do this run the following command:
-<>
-<> ```
-<> PUPPETEER_PRODUCT=chrome deno run -A --unstable https://deno.land/x/puppeteer@16.2.0/install.ts
-<> ```
 
 ## How to run
 
 ```
-deno run --allow-all --unstable scrape.js {arguments}
+node puppet-scrape.js {arguments}
 ```
 
 ## Available arguments
@@ -34,7 +26,7 @@ deno run --allow-all --unstable scrape.js {arguments}
 --titles : Saves a CSV file of the title tags for each page. NOTE: Not working!
 --metas : Saves the meta descriptions of each selected page into a csv file. NOTE: Not working!
 --links : Saves a text file of link information from each selected page. 
---options : Displays the available arguments
+--help: Displays the available arguments
 --overwrite : Whether or not to recrawl pages we've already seen 
 --url=https://urltocrawl.com : the URL to crawl
 ```
