@@ -25,7 +25,7 @@ let args = new options(process.argv);
 	}
 
 	if(args.options.sitemap) {
-			
+					
 	}
 
 	for(const url of crawlQueue.getURLList) {
@@ -39,7 +39,6 @@ let args = new options(process.argv);
 			crawlQueue.addURLToList(pageURLs);
 		}
 	}
-	console.log(crawlQueue.getURLList);
 
 	await browser.close();
 	process.exit();

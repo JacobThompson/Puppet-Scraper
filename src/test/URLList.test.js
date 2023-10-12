@@ -24,6 +24,7 @@ test("Testing URLList.isValidURI()", () => {
 	expect(URLList.isValidURI("Flabbergasting!")).toBe(false);
 	expect(URLList.isValidURI(42)).toBe(false);
 	expect(URLList.isValidURI(new RegExp(''))).toBe(false);
+	expect(URLList.isValidURI("https://myactivity.google.com/privacyadvisor/search?utm_source=googlemenu&fg=1")).toBe(true);
 });
 
 test("Testing URLList.removeInvalidURLs()", () => {
