@@ -9,7 +9,7 @@ class Options {
 			this.options.text = true;
 		}
 		if(listOfArguments?.help === true) {
-			printHelp();
+			Options.printHelp();
 			process.exit();
 		}
 		if(listOfArguments?.titles === true) {
@@ -30,6 +30,12 @@ class Options {
 		if(isString(listOfArguments?.url)) {
 			this.options.url = listOfArguments.url;
 		}
+		if(listOfArguments?.sitemap === true) {
+			this.options.sitemap = true;
+		}
+		if(listOfArguments?.pagediscover == true) {
+			this.options.pagediscover = true;
+		}
 
 		delete listOfArguments.txt;
 		delete listOfArguments.help;
@@ -39,6 +45,8 @@ class Options {
 		delete listOfArguments.overwrite;
 		delete listOfArguments.url;
 		delete listOfArguments.pdf;
+		delete listOfArguments.sitemap;
+		delete listOfArguments.pagediscover;
 
 		for(const arg in listOfArguments) {
 			PUPPET_SCRAPE_LOG.log({
