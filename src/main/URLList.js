@@ -81,22 +81,28 @@ class URLList {
 		return urls;
 	}
 
-	async addURLsFromSitemap(sitemapURL) {
-		let sitemapsToParse = [sitemapURL];
+	async fetchSitemap(url) {
+		try {
+			let response = await fetch(url);
+			let xml = await response.text();
+			return xml;
+		}
+		catch(e) {
+			PUPPET_SCRAPE_LOG.log({
+				level: 'warn',
+				message: "Could not fetch sitemap " + url + e
+			});
+		}
+		return false;
+	}
+
+	async addURLsFromSitemap(url = this.domain + "/sitemap.xml") {
+		let sitemapsToParse = [url];
 		
 		for(let sitemapURL of sitemapsToParse) {
-			let xml;
-			try {
-				let response = await fetch(sitemapURL);
-				xml = await response.text();
-			}
-			catch(e) {
-				PUPPET_SCRAPE_LOG.log({
-					level: 'warn',
-					message: "Could not fetch sitemap." + sitemapURL
-				});
-				continue;
-			}
+			const xml = await this.fetchSitemap(sitemapURL);	
+
+			if(xml === false) continue;
 
 			const parser = new XMLParser();
 
