@@ -1,4 +1,5 @@
 const URLList = require("../main/URLList.js");
+const express = require('express');
 
 test("Testing URLList.isInDomain()", () => {
 	expect(URLList.isInDomain("https://google.com/help/products", "https://google.com")).toBe(true);
@@ -166,4 +167,12 @@ test("Test URLList.removeURLFromList", () => {
 
 	expect(test2.getURLList).toStrictEqual(["https://google.com"]);
 
+});
+
+test("Test URLList.addURLsFromSitemap", () => {
+	const exp = express();
+
+	exp.use(express.static(__dirname + '/resource'));
+	
+	const server = exp.listen(5000);
 });

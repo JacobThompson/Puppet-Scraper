@@ -25,7 +25,7 @@ let args = new options(process.argv);
 	}
 
 	if(args.options.sitemap) {
-					
+		crawlQueue.addURLsFromSitemap();
 	}
 
 	for(const url of crawlQueue.getURLList) {
