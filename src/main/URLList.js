@@ -1,5 +1,7 @@
 const isString = require("./Util.js");
 const PUPPET_SCRAPE_LOG = require("./EventLog.js");
+const fetch = require('node-fetch');
+const { XMLParser, XMLBuilder, XMLValidator } = require('fast-xml-parser');
 
 class URLList {
 	/*
@@ -77,6 +79,59 @@ class URLList {
 			}
 		}
 		return urls;
+	}
+
+	async addURLsFromSitemap(sitemapURL) {
+		let sitemapsToParse = [sitemapURL];
+		
+		for(let sitemapURL of sitemapsToParse) {
+			let xml;
+			try {
+				let response = await fetch(sitemapURL);
+				xml = await response.text();
+			}
+			catch(e) {
+				PUPPET_SCRAPE_LOG.log({
+					level: 'warn',
+					message: "Could not fetch sitemap." + sitemapURL
+				});
+				continue;
+			}
+
+			const parser = new XMLParser();
+
+			let parsedXML;
+			try {
+				parsedXML = parser.parse(xml);
+			} 
+			catch(e) {
+				PUPPET_SCRAPE_LOG.log({
+					level: 'warn',
+					message: "Malformed sitemap at " + sitemapURL + ". Skipping"
+				});
+				continue;
+			}
+
+			if(parsedXML?.sitemapindex?.sitemap?.length > 0) {
+				for(const sitemap of parsedXML.sitemapindex.sitemap) {
+					if(URLList.isValidURI(sitemap.loc)) {
+						sitemapsToParse.push(sitemap.loc);
+					}
+					else {
+						PUPPET_SCRAPE_LOG.log({
+							level: 'warn',
+							message: "Could not fetch sitemap." + sitemapURL
+						});
+					}
+				}
+			}
+
+			if(parsedXML?.urlset?.url?.length > 0) {
+				for(const url of parsedXML.urlset.url) {
+					this.addURLToList(url.loc);
+				}
+			}
+		}
 	}
 
 	addURLToList(url) {
