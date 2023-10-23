@@ -81,6 +81,10 @@ class URLList {
 		return urls;
 	}
 
+	static standardizeURLForFS(url) {
+		return url.replaceAll(/:/g, "_").replaceAll(/\//g, "_").replaceAll(/\?/g, "_").replaceAll(/#/g, "_").replaceAll(/&/g, "_");
+	}
+
 	async fetchSitemap(url) {
 		try {
 			let response = await fetch(url);

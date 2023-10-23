@@ -1,9 +1,10 @@
 const puppeteer = require("puppeteer");
-const fs = require('node:fs/promises');
+const fs = require('node:fs');
 const options = require("./src/main/Options.js");
 const URLList = require("./src/main/URLList.js");
 const PUPPET_SCRAPE_LOG = require("./src/main/EventLog.js");
 const http = require("node:http");
+const buffer = require("node:buffer");
 
 const readline = require('node:readline').createInterface({
 	input: process.stdin,
@@ -37,6 +38,36 @@ let args = new options(process.argv);
 			});
 
 			crawlQueue.addURLToList(pageURLs);
+		}
+
+		if(args.options.text) {
+			const pageText = await page.evaluate(() => {
+				return document.documentElement.innerText;
+			});
+
+			const pageTextArray = new Uint8Array(Buffer.from(pageText));
+
+			//const fileToWrite = fs.open("./data/" + URLList.standardizeURLForFS(url) + ".innertext.txt");
+			
+			fs.writeFile("./data/" + URLList.standardizeURLForFS(url) + ".innertext.txt", pageTextArray, (err) => {
+				console.log(err);
+			});
+		}
+
+		if(args.options.titles) {
+
+		}
+
+		if(args.options.metas) {
+
+		}
+
+		if(args.options.links) {
+
+		}
+
+		if(args.options.pdf) {
+
 		}
 	}
 
